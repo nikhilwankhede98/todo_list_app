@@ -1,0 +1,35 @@
+.container {
+    position: relative; /* Ensure the container is relative for absolute positioning */
+    width: 100%; /* Adjust width as needed */
+    height: calc(100vh - 64px); /* Adjust height as needed */
+    background-image: url('hero_image.jpg');
+    background-size: cover; /* Cover the entire div with the background image */
+    background-position: right center; /* Position the image to the right */
+    padding-top: 40px;
+    box-sizing: border-box; /* Include padding in the total width/height */
+}
+  
+.text {
+    position: absolute;
+    top: 50%;
+    left: 20px; /* Adjust left position as needed */
+    transform: translateY(-50%);
+    max-width: calc(100% - 40px); /* Adjust max-width based on padding */
+    color: #fff; /* Text color */
+    /* background-color: rgba(0, 0, 0, 0.5); Semi-transparent background */
+    padding: 20px; /* Add padding for spacing */
+}
+
+.text h1,
+.text p {
+    margin: 0; /* Remove default margin */
+}
+
+.text p {
+    max-width: 350px;
+}
+
+.text h1 {
+    font-size: 48px; /* Adjust font size as needed */
+    margin-bottom: 10px; /* Bottom margin for paragraph */
+}

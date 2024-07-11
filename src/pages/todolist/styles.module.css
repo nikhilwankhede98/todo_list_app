@@ -1,0 +1,133 @@
+.todo_list_container {
+	width: 100%;
+	height: calc(100vh - 64px);
+	background-color: #efe9ec;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+    flex-direction: column;
+}
+
+.todo_list_content_box {
+	width: 90%;
+    height: 430px; /* Set height as needed */
+    padding: 35px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+	display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    border: 1px solid darkgray;
+	border-radius: 10px;
+	box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 20%),
+		0px 3px 4px 0px rgb(0 0 0 / 14%), 0px 1px 8px 0px rgb(0 0 0 / 12%);
+    
+}
+
+.todo_list_item {
+    background-color: white;
+    flex: 1 1 calc(33.33% - 20px); /* Calculate width to show 3 cards per row with gap */
+    max-width: calc(33.33% - 20px); /* Ensure max-width respects the calculated width */
+    height: 100%;
+    background-color: #f0f0f0;
+    padding: 15px;
+    box-sizing: border-box;
+    height: 155px;
+    border-radius: 10px;
+    box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 20%),
+		0px 3px 4px 0px rgb(0 0 0 / 14%), 0px 1px 8px 0px rgb(0 0 0 / 12%);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+
+    .todo_action_section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+
+        .icon_class {
+            display: flex;
+            align-items: center;
+            padding-left: 5px;
+
+            img {
+                width: 25px;
+                cursor: pointer;
+            }
+
+            img:first-child {
+                padding-right: 7px
+            }
+        }
+    }
+
+    .todo_name {
+        margin: 0px;
+        font-size: 20px;
+        font-weight: 500;
+    }
+
+    .todo_description {
+        margin: 0px;
+        margin-bottom: 5px;
+        white-space: nowrap;         
+        overflow: hidden;            
+        text-overflow: ellipsis;
+        display: block;
+        font-size: 14px;
+    }
+
+    .todo_status {
+        padding: 4px 10px;
+        width: fit-content;
+        margin-top: auto;
+        border-radius: 10px;
+    }
+}
+
+.to_do_border_color {
+    border-left: red;
+}
+.in_progress_border_color {
+    border-left: yellow;
+}
+.done_border_color {
+    border-left: green;
+}
+
+.form-dialog {
+    padding: 20px;
+    border: none;
+    background-color: white;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-dialog form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-dialog label {
+    font-weight: bold;
+}
+
+.form-dialog input,
+.form-dialog button {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-dialog button {
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.form-dialog button:hover {
+    background-color: #0056b3;
+}

@@ -1,24 +1,53 @@
+import React, { useState } from "react"
 import logo from './logo.svg';
-import './App.css';
+import { Header } from './components'
+import { Homepage, Loginpage, SignupPage, TodosPage, TodoItemPage } from './pages'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 function App() {
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+        <Header isLoggedIn= {isLoggedIn} />
+        <Routes>
+          <Route 
+            element={
+              <Homepage />
+            }
+            path="/"
+          />
+          <Route 
+            element={
+              <Loginpage
+                setIsLoggedIn= {setIsLoggedIn}
+              />
+            }
+            path="/login"
+          />
+          <Route 
+            element={
+              <SignupPage />
+            }
+            path="/signup"
+          />
+          <Route 
+            element={
+              <TodosPage />
+            }
+            path="/todos"
+          />
+          <Route 
+            element={
+              <TodoItemPage />
+            }
+            path="/todo/:todoid"
+          />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 
