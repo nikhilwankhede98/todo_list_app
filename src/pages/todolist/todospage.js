@@ -11,7 +11,7 @@ import EditIcon from './assets/edit_icon.svg'
 import DeleteIcon from './assets/delete_icon.svg'
 import { firestore } from '../../api/firebase';
 
-const TodosPage = () => {
+const TodosPage = ({ isLoggedIn }) => {
 
     const navigate = useNavigate();
 
@@ -35,6 +35,23 @@ const TodosPage = () => {
         {id: 17, name: "Todo 17", description: "Todo 17 description", status: "To Do"},
         {id: 18, name: "Todo 18", description: "Todo 18 description", status: "In Progress"},
     ])
+
+    useEffect(() => {
+        if (!isLoggedIn) navigate("/login")
+    }, [isLoggedIn])
+
+    useEffect(() => {
+        const unsubscribe = firestore.collection('todos').onSnapshot(snapshot => {
+          const todosList = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          console.log('888', { todosList });
+          setTodos(todosList);
+        });
+    
+        return () => unsubscribe();
+    }, []);
 
     const [selectedStatusFilter, setSelectedStatusFilter] = useState("All")
 
@@ -156,18 +173,7 @@ const TodosPage = () => {
 
     console.log('777', { todos });
 
-    useEffect(() => {
-        const unsubscribe = firestore.collection('todos').onSnapshot(snapshot => {
-          const todosList = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          }));
-          console.log('888', { todosList });
-          setTodos(todosList);
-        });
-    
-        return () => unsubscribe();
-    }, []);
+    console.log('123', { isLoggedIn });
 
     return (
         <>

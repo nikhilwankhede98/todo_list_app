@@ -11,7 +11,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Header isLoggedIn= {isLoggedIn} />
+        <Header isLoggedIn= {isLoggedIn} setIsLoggedIn= {setIsLoggedIn} />
         <Routes>
           <Route 
             element={
@@ -23,19 +23,24 @@ function App() {
             element={
               <Loginpage
                 setIsLoggedIn= {setIsLoggedIn}
+                isLoggedIn= {isLoggedIn}
               />
             }
             path="/login"
           />
           <Route 
             element={
-              <SignupPage />
+              <SignupPage 
+                isLoggedIn= {isLoggedIn}
+              />
             }
             path="/signup"
           />
           <Route 
             element={
-              <TodosPage />
+              <TodosPage 
+                isLoggedIn= {isLoggedIn}
+              />
             }
             path="/todos"
           />
