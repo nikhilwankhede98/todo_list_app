@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { TodoDialogComponent } from "../../components"
@@ -9,6 +9,7 @@ import styles from "./styles.module.css";
 import AddIcon from './assets/add_icon.png'
 import EditIcon from './assets/edit_icon.svg'
 import DeleteIcon from './assets/delete_icon.svg'
+import { firestore } from '../../api/firebase';
 
 const TodosPage = () => {
 
@@ -65,11 +66,48 @@ const TodosPage = () => {
 
     const [currentTodoItem, setCurrentTodoItem] = useState({})
 
-    const addTodo = () => setTodos(todos => todos.push(currentTodoItem))
+    const addTodo = async (todoData) => {
+        console.log('888add', { todoData });
+        const { name, description, status } = todoData
+        try {
+          await firestore.collection('todos').add({
+            name,
+            description,
+            status
+          });
+        //   setTodo('');
+        } catch (error) {
+          console.error('Error adding todo:', error);
+        }
+    };
 
-    const deleteTodo = (id) => {
-        const filteredTodos = todos.filter(todo => todo.id !== id)
-        setTodos(filteredTodos)
+    // const deleteTodo = (id) => {
+    //     console.log('888', { id });
+    //     const filteredTodos = todos.filter(todo => todo.id !== id)
+    //     setTodos(filteredTodos)
+    // }
+
+    const deleteTodo = async (id) => {
+        console.log('888delete', id);
+        try {
+          await firestore.collection('todos').doc(id).delete();
+        } catch (error) {
+          console.error('Error deleting todo:', error);
+        }
+    };
+
+    const updateTodo = async (id, updatedData) => {
+        const { name, description, status } = updatedData
+        console.log('888', { id, updatedData });
+        try {
+            await firestore.collection('todos').doc(id).update({
+                name,
+                description,
+                status
+            });
+        } catch (error) {
+            console.error('Error updating todo:', error);
+        }
     }
 
     const handleTodoUpdate = (id, newValue, key= "") => {
@@ -117,6 +155,19 @@ const TodosPage = () => {
     }
 
     console.log('777', { todos });
+
+    useEffect(() => {
+        const unsubscribe = firestore.collection('todos').onSnapshot(snapshot => {
+          const todosList = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          console.log('888', { todosList });
+          setTodos(todosList);
+        });
+    
+        return () => unsubscribe();
+    }, []);
 
     return (
         <>
@@ -193,7 +244,8 @@ const TodosPage = () => {
                                             style= {activeStatusBtnStyle(statusOption, todo.status)}
                                             onClick={(event) => {
                                                 event.stopPropagation()
-                                                handleTodoUpdate(todo.id, { ...todo, status: statusOption })
+                                                // handleTodoUpdate(todo.id, { ...todo, status: statusOption })
+                                                updateTodo(todo.id, { ...todo, status: statusOption })
                                             }}
                                         >
                                             {statusOption}
@@ -213,6 +265,8 @@ const TodosPage = () => {
                   todos= {todos}
                   activeStatusBtnStyle= {activeStatusBtnStyle}
                   getStatusColor= {getStatusColor}
+                  updateTodo= {updateTodo}
+                  addTodo= {addTodo}
                 />
             </div>
         </>

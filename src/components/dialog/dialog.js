@@ -8,7 +8,7 @@ import { Typography, DialogTitle, Dialog, DialogContent, DialogContentText } fro
 // import DialogContentText from '@mui/material/DialogContentText';
 import styles from "./styles.module.css";
 
-const TodoDialogComponent = ({ todos= [], dialogInfo, setDialogInfo, getStatusColor= () => {}, handleChangeDialogInfo = () => {}, handleTodoUpdate= () => {}, addNewTodo= () => {}, activeStatusBtnStyle= () => {}, getCurrentTodo }) => {
+const TodoDialogComponent = ({ todos= [], dialogInfo, setDialogInfo, updateTodo = () => {}, addTodo = () => {}, getStatusColor= () => {}, handleChangeDialogInfo = () => {}, handleTodoUpdate= () => {}, addNewTodo= () => {}, activeStatusBtnStyle= () => {}, getCurrentTodo }) => {
 
     const { dialogType = "add", isDialogOpen = false, currentTodoName = "", currentTodoDescription= "", currentTodoStatus= "To Do", dialogTodoId = "" } = dialogInfo
     console.log('555', { dialogInfo }, getCurrentTodo(dialogTodoId));
@@ -98,21 +98,33 @@ const TodoDialogComponent = ({ todos= [], dialogInfo, setDialogInfo, getStatusCo
                         className={styles.green_btn}
                         onClick={() => {
                             if (dialogType === "add") {
-                                addNewTodo({
-                                    id: todos.length + 1,
+                                // addNewTodo({
+                                //     id: todos.length + 1,
+                                //     name: currentTodoName,
+                                //     description: currentTodoDescription,
+                                //     status: currentTodoStatus    
+                                // })
+                                addTodo({
+                                    name: currentTodoName,
+                                    description: currentTodoDescription,
+                                    status: currentTodoStatus 
+                                }
+                                )
+                            } else {
+                                // handleTodoUpdate(
+                                //     dialogTodoId,
+                                //     {
+                                //         name: currentTodoName,
+                                //         description: currentTodoDescription,
+                                //         status: currentTodoStatus    
+                                //     }
+                                // )
+                                console.log('888updated', dialogTodoId);
+                                updateTodo(dialogTodoId, {
                                     name: currentTodoName,
                                     description: currentTodoDescription,
                                     status: currentTodoStatus    
                                 })
-                            } else {
-                                handleTodoUpdate(
-                                    dialogTodoId,
-                                    {
-                                        name: currentTodoName,
-                                        description: currentTodoDescription,
-                                        status: currentTodoStatus    
-                                    }
-                                )
                             }
                             handleChangeDialogInfo()
                     }}>

@@ -31,8 +31,9 @@ const SignupPage = () => {
 		// navigate('/todos')
 		event.preventDefault();
 		try {
-			await createUserWithEmailAndPassword(auth, email, password)
-			console.log('777', "account created new");
+			const response = await createUserWithEmailAndPassword(auth, email, password)
+			if (response?.user) navigate('/login')
+			console.log('777', { response }, "account created new");
 		} catch (error) {
 			console.log('777', { error });
 		}

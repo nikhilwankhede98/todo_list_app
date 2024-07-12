@@ -2,15 +2,27 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth'; // For authentication
 import 'firebase/compat/firestore'; // For Firestore
 
+const {
+  REACT_APP_API_KEY,
+  REACT_APP_AUTH_DOMAIN,
+  REACT_APP_DATABASE_URL,
+  REACT_APP_PROJECT_ID,
+  REACT_APP_STORAGE_BUCKET,
+  REACT_APP_MESSAGING_SENDER_ID,
+  REACT_APP_APP_ID,
+  REACT_APP_MEASUREMENT_ID
+} = process.env
+
+console.log('999', process.env);
 const firebaseConfig = {
-  apiKey: "AIzaSyAlmWy1G0u4UW6jMSkedlmbViOvRNd2Mr8",
-  authDomain: "to-do-list-react-d9e93.firebaseapp.com",
-  databaseURL: "https://to-do-list-react-d9e93-default-rtdb.firebaseio.com",
-  projectId: "to-do-list-react-d9e93",
-  storageBucket: "to-do-list-react-d9e93.appspot.com",
-  messagingSenderId: "442526017380",
-  appId: "1:442526017380:web:e5a6950c8799bcd822bc71",
-  measurementId: "G-GH3798TDW3"
+  apiKey: REACT_APP_API_KEY,
+  authDomain: REACT_APP_AUTH_DOMAIN,
+  databaseURL: REACT_APP_DATABASE_URL,
+  projectId: REACT_APP_PROJECT_ID,
+  storageBucket: REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: REACT_APP_MESSAGING_SENDER_ID,
+  appId: REACT_APP_APP_ID,
+  measurementId: REACT_APP_MEASUREMENT_ID
 };
 
 firebase.initializeApp(firebaseConfig);

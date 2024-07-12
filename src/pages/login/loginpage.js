@@ -5,7 +5,7 @@ import styles from "./styles.module.css";
 import { auth } from "../../api/firebase"
 import { signInWithEmailAndPassword } from "firebase/auth";
 
-const Loginpage = () => {
+const Loginpage = ({ setIsLoggedIn }) => {
 
 	const navigate = useNavigate();
 
@@ -39,8 +39,10 @@ const Loginpage = () => {
 		// navigate('/todos')
 		event.preventDefault();
 		try {
-			await signInWithEmailAndPassword(auth, email, password)
-			console.log('777', "account created");
+			const response = await signInWithEmailAndPassword(auth, email, password)
+			setIsLoggedIn(true)
+			if (response?.user) navigate('/todos')
+			console.log('777', { response }, "account created");
 		} catch (error) {
 			console.log('777', { error });
 		}
