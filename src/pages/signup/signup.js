@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
+import { auth } from "../../api/firebase"
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const SignupPage = () => {
 	const [userInfo, setUserInfo] = useState(
@@ -10,6 +12,8 @@ const SignupPage = () => {
           password: ""
         }
     )
+
+	const { email, password } = userInfo
 	const [error, setError] = useState("");
 	const navigate = useNavigate();
 
@@ -22,6 +26,17 @@ const SignupPage = () => {
           [name]: value
         })
     }
+
+	const handleSubmit = async (event) => {
+		// navigate('/todos')
+		event.preventDefault();
+		try {
+			await createUserWithEmailAndPassword(auth, email, password)
+			console.log('777', "account created new");
+		} catch (error) {
+			console.log('777', { error });
+		}
+	}
 
 	// const handleSubmit = async (e) => {
 	// 	e.preventDefault();
@@ -53,26 +68,8 @@ const SignupPage = () => {
 					</Link>
 				</div>
 				<div className={styles.right}>
-					<form className={styles.form_container} onSubmit={() => {}}>
+					<form className={styles.form_container} onSubmit={handleSubmit}>
 						<h1>Create Account</h1>
-						<input
-							type="text"
-							placeholder="First Name"
-							name="firstName"
-							onChange={handleInputChange}
-							value={userInfo.firstName}
-							required
-							className={styles.input}
-						/>
-						<input
-							type="text"
-							placeholder="Last Name"
-							name="lastName"
-							onChange={handleInputChange}
-							value={userInfo.lastName}
-							required
-							className={styles.input}
-						/>
 						<input
 							type="email"
 							placeholder="Email"
