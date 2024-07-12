@@ -95,6 +95,20 @@ const TodosPage = () => {
         return todos.find(todo => todo.id === dialogTodoId) || {}
     }
 
+    const todoStatusConfigList = () => {
+        return ["To Do", "In Progress", "Done"]
+    }
+
+    const activeStatusBtnStyle = (statusOption, currentTodoStatus) => {
+        return statusOption === currentTodoStatus ? 
+            { backgroundColor: getStatusColor(statusOption), color: "black", padding: "4px 10px" } : 
+            { border: `2px solid ${getStatusColor(statusOption)}`, opacity: 0.6 }
+    }
+
+    const handleTodoStatusUpdate = (id, ) => {
+
+    }
+
     console.log('666', { todos });
 
     return (
@@ -136,12 +150,23 @@ const TodosPage = () => {
                             >
                                 {todo.description}
                             </p>
-                            <span 
-                                style= {{ border: `2px solid ${getStatusColor(todo.status)}` }}
-                                className={styles.todo_status}
-                            >
-                                {todo.status}
-                            </span>
+                            <div className={styles.status_btn_container}>
+                                {todoStatusConfigList().map(statusOption => {
+                                    return (
+                                            <span
+                                                key={statusOption}
+                                                className={styles.todo_status}
+                                                style= {activeStatusBtnStyle(statusOption, todo.status)}
+                                                onClick={(event) => {
+                                                    event.stopPropagation()
+                                                    handleTodoUpdate(todo.id, { ...todo, status: statusOption })
+                                                }}
+                                            >
+                                                {statusOption}
+                                            </span>
+                                    )
+                                })}
+                            </div>
                         </div>
                     ))}
                 </div>
