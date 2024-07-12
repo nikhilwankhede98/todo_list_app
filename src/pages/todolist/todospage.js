@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { TodoDialogComponent } from "../../components"
+import {InputLabel, MenuItem, FormControl, Select} from '@mui/material';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import styles from "./styles.module.css";
@@ -16,23 +17,27 @@ const TodosPage = () => {
     const [todos, setTodos] = useState([
         {id: 1, name: "Todo 1", description: "Todo 1 description description description description description", status: "To Do"},
         {id: 2, name: "Todo 2", description: "Todo 2 description", status: "In Progress"},
-        {id: 3, name: "Todo 3", description: "Todo 3 description", status: "Done"},
-        {id: 4, name: "Todo 1", description: "Todo 1 description", status: "To Do"},
-        {id: 5, name: "Todo 2", description: "Todo 2 description", status: "In Progress"},
-        {id: 6, name: "Todo 3", description: "Todo 3 description", status: "Done"},
-        {id: 7, name: "Todo 1", description: "Todo 1 description", status: "To Do"},
-        {id: 8, name: "Todo 2", description: "Todo 2 description", status: "In Progress"},
-        {id: 9, name: "Todo 1", description: "Todo 1 description", status: "To Do"},
-        {id: 10, name: "Todo 2", description: "Todo 2 description", status: "In Progress"},
-        {id: 11, name: "Todo 3", description: "Todo 3 description", status: "Done"},
-        {id: 12, name: "Todo 1", description: "Todo 1 description", status: "To Do"},
-        {id: 13, name: "Todo 2", description: "Todo 2 description", status: "In Progress"},
-        {id: 14, name: "Todo 1", description: "Todo 1 description", status: "To Do"},
-        {id: 15, name: "Todo 2", description: "Todo 2 description", status: "In Progress"},
-        {id: 16, name: "Todo 3", description: "Todo 3 description", status: "Done"},
-        {id: 17, name: "Todo 1", description: "Todo 1 description", status: "To Do"},
-        {id: 18, name: "Todo 2", description: "Todo 2 description", status: "In Progress"},
+        {id: 3, name: "Todo 3", description: "Todo 3 description", status: "To Do"},
+        {id: 4, name: "Todo 4", description: "Todo 4 description", status: "Done"},
+        {id: 5, name: "Todo 5", description: "Todo 5 description", status: "Done"},
+        {id: 6, name: "Todo 6", description: "Todo 6 description", status: "To Do"},
+        {id: 7, name: "Todo 7", description: "Todo 7 description", status: "To Do"},
+        {id: 8, name: "Todo 8", description: "Todo 8 description", status: "In Progress"},
+        {id: 9, name: "Todo 9", description: "Todo 9 description", status: "To Do"},
+        {id: 10, name: "Todo 10", description: "Todo 10 description", status: "In Progress"},
+        {id: 11, name: "Todo 11", description: "Todo 11 description", status: "Done"},
+        {id: 12, name: "Todo 12", description: "Todo 12 description", status: "To Do"},
+        {id: 13, name: "Todo 13", description: "Todo 13 description", status: "In Progress"},
+        {id: 14, name: "Todo 14", description: "Todo 14 description", status: "To Do"},
+        {id: 15, name: "Todo 15", description: "Todo 15 description", status: "In Progress"},
+        {id: 16, name: "Todo 16", description: "Todo 16 description", status: "Done"},
+        {id: 17, name: "Todo 17", description: "Todo 17 description", status: "To Do"},
+        {id: 18, name: "Todo 18", description: "Todo 18 description", status: "In Progress"},
     ])
+
+    const [selectedStatusFilter, setSelectedStatusFilter] = useState("All")
+
+    const statusFilterOptions = ["All", "To Do", "In Progress", "Done"]
 
     const [dialogInfo, setDialogInfo] = useState({
         dialogType: "",
@@ -84,6 +89,12 @@ const TodosPage = () => {
         }
     }
 
+    const addNewTodo = (todo) => {
+        let newTodo = [...todos]
+        newTodo.push(todo)
+        setTodos(newTodo)
+    }
+
     const getStatusColor = (status) => {
         console.log('111', { status });
         if (status === "To Do") return "#f36363"
@@ -105,22 +116,45 @@ const TodosPage = () => {
             { border: `2px solid ${getStatusColor(statusOption)}`, opacity: 0.6 }
     }
 
-    const handleTodoStatusUpdate = (id, ) => {
-
-    }
-
-    console.log('666', { todos });
+    console.log('777', { todos });
 
     return (
         <>
             <div className={styles.todo_list_container}>
-                <h1 style= {{ margin: "0px", paddingBottom: "15px" }}>TODO <span style={{ color: "#1976d2" }}>List</span></h1>
+                <div className={styles.header_section}>
+                    <h1 style= {{ margin: "0px" }}>TODO <span style={{ color: "#1976d2" }}>List</span></h1>
+                    <div className= {styles.header_btns_wrapper}>
+                        <img
+                            src= {AddIcon}
+                            onClick={() => {handleDialogInfo("add", true, "", "", "To Do", "")}}
+                        />
+                        <FormControl sx={{ m: 1, minWidth: 135 }} size="small">
+                            <InputLabel id="demo-select-small-label">Status Filter</InputLabel>
+                            <Select
+                                labelId="demo-select-small-label"
+                                id="demo-select-small"
+                                value={selectedStatusFilter}
+                                label="Status Filter"
+                                onChange={(event) => setSelectedStatusFilter(event.target.value)}
+                            >
+                                {statusFilterOptions.map((option, index) => (
+                                    <MenuItem key={index} value={option}>
+                                        {option}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </div>
+                </div>
                 <div className={styles.todo_list_content_box}>
                     {todos.map(todo => (
                         <div
                             key= {todo.id}
                             className= {styles.todo_list_item}
-                            style= {{ borderLeft: `5px solid ${getStatusColor(todo.status)}` }}
+                            style= {{
+                                borderLeft: `5px solid ${getStatusColor(todo.status)}`,
+                                display: (selectedStatusFilter === "All" || selectedStatusFilter === todo.status) ? "inline-flex" : "none"
+                            }}
                             onClick={() => {handleDialogInfo("view", true, todo.name, todo.description, todo.status, todo.id)}}
                         >
                             <div className={styles.todo_action_section}>
@@ -151,19 +185,19 @@ const TodosPage = () => {
                                 {todo.description}
                             </p>
                             <div className={styles.status_btn_container}>
-                                {todoStatusConfigList().map(statusOption => {
+                                {["To Do", "In Progress", "Done"].map(statusOption => {
                                     return (
-                                            <span
-                                                key={statusOption}
-                                                className={styles.todo_status}
-                                                style= {activeStatusBtnStyle(statusOption, todo.status)}
-                                                onClick={(event) => {
-                                                    event.stopPropagation()
-                                                    handleTodoUpdate(todo.id, { ...todo, status: statusOption })
-                                                }}
-                                            >
-                                                {statusOption}
-                                            </span>
+                                        <span
+                                            key={statusOption}
+                                            className={styles.todo_status}
+                                            style= {activeStatusBtnStyle(statusOption, todo.status)}
+                                            onClick={(event) => {
+                                                event.stopPropagation()
+                                                handleTodoUpdate(todo.id, { ...todo, status: statusOption })
+                                            }}
+                                        >
+                                            {statusOption}
+                                        </span>
                                     )
                                 })}
                             </div>
@@ -174,7 +208,11 @@ const TodosPage = () => {
                   handleChangeDialogInfo= {handleDialogInfo}
                   dialogInfo= {dialogInfo}
                   handleTodoUpdate= {handleTodoUpdate}
+                  addNewTodo= {addNewTodo}
                   getCurrentTodo = {getCurrentTodo}
+                  todos= {todos}
+                  activeStatusBtnStyle= {activeStatusBtnStyle}
+                  getStatusColor= {getStatusColor}
                 />
             </div>
         </>
