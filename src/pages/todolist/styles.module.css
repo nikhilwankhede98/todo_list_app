@@ -78,11 +78,17 @@
         font-size: 14px;
     }
 
-    .todo_status {
-        padding: 4px 10px;
-        width: fit-content;
+    .status_btn_container {
+        display: flex;
+        align-items: center;
         margin-top: auto;
-        border-radius: 10px;
+        .todo_status {
+            padding: 4px 10px;
+            width: fit-content;
+            /* margin-top: auto; */
+            border-radius: 10px;
+            margin-right: 5px;
+        }
     }
 }
 
