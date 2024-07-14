@@ -1,12 +1,26 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import logo from './logo.svg';
 import { Header } from './components'
 import { Homepage, Loginpage, SignupPage, TodosPage, TodoItemPage } from './pages'
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { auth } from "./api/firebase"
 
 function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
   
   return (
     <>
@@ -40,6 +54,7 @@ function App() {
             element={
               <TodosPage 
                 isLoggedIn= {isLoggedIn}
+                userId= {user?.uid || null}
               />
             }
             path="/todos"

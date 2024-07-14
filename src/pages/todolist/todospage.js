@@ -10,8 +10,9 @@ import AddIcon from './assets/add_icon.png'
 import EditIcon from './assets/edit_icon.svg'
 import DeleteIcon from './assets/delete_icon.svg'
 import { firestore } from '../../api/firebase';
+import { collection, addDoc, updateDoc, doc, deleteDoc, query, where, onSnapshot } from 'firebase/firestore';
 
-const TodosPage = ({ isLoggedIn }) => {
+const TodosPage = ({ isLoggedIn, userId = null }) => {
 
     const navigate = useNavigate();
 
@@ -37,21 +38,33 @@ const TodosPage = ({ isLoggedIn }) => {
     ])
 
     useEffect(() => {
-        if (!isLoggedIn) navigate("/login")
-    }, [isLoggedIn])
+        if ((!isLoggedIn || !userId)) navigate("/login")
+    }, [isLoggedIn, userId])
 
     useEffect(() => {
-        const unsubscribe = firestore.collection('todos').onSnapshot(snapshot => {
+        const unsubscribe = onSnapshot(query(collection(firestore, 'todos'), where('userId', '==', userId)), (snapshot) => {
           const todosList = snapshot.docs.map(doc => ({
             id: doc.id,
-            ...doc.data()
+            ...doc.data(),
           }));
-          console.log('888', { todosList });
           setTodos(todosList);
         });
     
         return () => unsubscribe();
-    }, []);
+    }, [userId]);
+
+    // useEffect(() => {
+    //     const unsubscribe = firestore.collection('todos').onSnapshot(snapshot => {
+    //       const todosList = snapshot.docs.map(doc => ({
+    //         id: doc.id,
+    //         ...doc.data()
+    //       }));
+    //       console.log('888', { todosList });
+    //       setTodos(todosList);
+    //     });
+    
+    //     return () => unsubscribe();
+    // }, []);
 
     const [selectedStatusFilter, setSelectedStatusFilter] = useState("All")
 
@@ -83,20 +96,51 @@ const TodosPage = ({ isLoggedIn }) => {
 
     const [currentTodoItem, setCurrentTodoItem] = useState({})
 
+    // const addTodo = async (todoData) => {
+    //     console.log('888add', { todoData });
+    //     const { name, description, status } = todoData
+    //     try {
+    //       await firestore.collection('todos').add({
+    //         name,
+    //         description,
+    //         status
+    //       });
+    //     //   setTodo('');
+    //     } catch (error) {
+    //       console.error('Error adding todo:', error);
+    //     }
+    // };
+
+    // const addTodo = async (todoData) => {
+    //     const { name, description, status } = todoData
+    //     try {
+    //       const docRef = await addDoc(collection(firestore, 'todos'), {
+    //         name,
+    //         description,
+    //         status,
+    //         createdAt: new Date(),
+    //       });
+    //       console.log('321', { docRef });
+    //     } catch (error) {
+    //         console.error('Error adding todo:', error);
+    //     }
+    // };
+
     const addTodo = async (todoData) => {
-        console.log('888add', { todoData });
+        // if (!taskInput.trim() || !taskDescriptionInput.trim()) return;
         const { name, description, status } = todoData
         try {
-          await firestore.collection('todos').add({
+          const docRef = await addDoc(collection(firestore, 'todos'), {
+            userId,
             name,
             description,
-            status
+            status,
+            createdAt: new Date(),
           });
-        //   setTodo('');
         } catch (error) {
-          console.error('Error adding todo:', error);
+          console.error('Error adding todo:', error.message);
         }
-    };
+      };
 
     // const deleteTodo = (id) => {
     //     console.log('888', { id });
@@ -104,28 +148,68 @@ const TodosPage = ({ isLoggedIn }) => {
     //     setTodos(filteredTodos)
     // }
 
-    const deleteTodo = async (id) => {
-        console.log('888delete', id);
+    // const deleteTodo = async (id) => {
+    //     console.log('888delete', id);
+    //     try {
+    //       await firestore.collection('todos').doc(id).delete();
+    //     } catch (error) {
+    //       console.error('Error deleting todo:', error);
+    //     }
+    // };
+
+    // const deleteTodo = async (todoId) => {
+    //     console.log('321', { todoId });
+    //     try {
+    //       await deleteDoc(collection(firestore, 'todos'), todoId);
+    //     } catch (error) {
+    //       console.error('Error removing todo: ', error.message);
+    //     }
+    // };
+
+    const deleteTodo = async (todoId) => {
         try {
-          await firestore.collection('todos').doc(id).delete();
+          await deleteDoc(doc(firestore, 'todos', todoId));
         } catch (error) {
-          console.error('Error deleting todo:', error);
+          console.error('Error removing task: ', error.message);
         }
     };
 
-    const updateTodo = async (id, updatedData) => {
-        const { name, description, status } = updatedData
-        console.log('888', { id, updatedData });
+    // const updateTodo = async (id, updatedData) => {
+    //     const { name, description, status } = updatedData
+    //     console.log('888', { id, updatedData });
+    //     try {
+    //         await firestore.collection('todos').doc(id).update({
+    //             name,
+    //             description,
+    //             status
+    //         });
+    //     } catch (error) {
+    //         console.error('Error updating todo:', error);
+    //     }
+    // }
+
+    // const updateTodo = async (todoId, updatedData) => {
+    //     // const { name, description, status } = updatedData
+    //     console.log('321', { updatedData });
+
+    //     try {
+    //         const taskDocRef = doc(firestore, 'todos', todoId);
+    //         console.log('321', taskDocRef);
+    //         await updateDoc(taskDocRef, { userId, ...updatedData });
+    //     } catch (error) {
+    //         console.log('321', { error });
+    //         console.error('Error updating todo: ', error.message);
+    //     }
+    // };
+
+    const updateTodo = async (todoId, updatedData) => {
         try {
-            await firestore.collection('todos').doc(id).update({
-                name,
-                description,
-                status
-            });
+            const taskDocRef = doc(firestore, 'todos', todoId);
+            await updateDoc(taskDocRef, updatedData);
         } catch (error) {
-            console.error('Error updating todo:', error);
+            console.error('Error updating task status: ', error.message);
         }
-    }
+    };
 
     const handleTodoUpdate = (id, newValue, key= "") => {
         console.log('555', { id, newValue, key });
