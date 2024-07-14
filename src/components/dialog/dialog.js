@@ -181,6 +181,7 @@ const TodoDialogComponent = ({ todos= [], dialogInfo, setDialogInfo, updateTodo 
                     <button 
                         type="submit"
                         className={styles.green_btn}
+                        onClick={() => handleChangeDialogInfo()}
                     >
                         CANCEL
                     </button>
