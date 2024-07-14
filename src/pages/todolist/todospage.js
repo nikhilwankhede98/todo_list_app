@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { TodoDialogComponent, CustomSnackbar, Loader } from "../../components"
-import {InputLabel, MenuItem, FormControl, Select} from '@mui/material';
+import {InputLabel, MenuItem, FormControl, Select, TextField} from '@mui/material';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import styles from "./styles.module.css";
@@ -21,6 +21,9 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
     const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 	const [snackbarMsg, setSnackbarMsg] = useState("");
 	const [snackbarType, setSnackbarType] = useState("");
+
+    const [searchTerm, setSearchTerm] = useState("")
+    const [selectedStatusFilter, setSelectedStatusFilter] = useState("All")
 
 	const handleSnackbarClose = (event, reason) => {
 		if (reason === 'clickaway') {
@@ -63,13 +66,18 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
     //     return () => unsubscribe();
     // }, []);
 
-    const [selectedStatusFilter, setSelectedStatusFilter] = useState("All")
 
     const getTodosByStatusFilter = () => {
-        const todoListByStatusFilter = todos.filter(todo => {
+        let todoListByStatusFilter = todos.filter(todo => {
             if (selectedStatusFilter === "All") return todos
             return todo.status === selectedStatusFilter
         })
+        if (searchTerm !== "") {
+            todoListByStatusFilter = todoListByStatusFilter.filter(todo =>
+                todo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                todo.description.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+        }
         console.log('444', { todoListByStatusFilter });
         return todoListByStatusFilter
     }
@@ -100,7 +108,6 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
     const { dialogType = "add", isDialogOpen = false, currentTodoName = "", currentTodoDescription="", currentTodoStatus= "To Do", dialogTodoId = "" } = dialogInfo
     console.log('333', { dialogInfo });
 
-    const [currentTodoItem, setCurrentTodoItem] = useState({})
 
     // const addTodo = async (todoData) => {
     //     console.log('888add', { todoData });
@@ -319,6 +326,63 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
                                     </MenuItem>
                                 ))}
                             </Select>
+                            
+                            {/* <div>
+                                <input
+                                    type="text"
+                                    placeholder="Search by title or description"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className={styles.input_field}
+                                />
+                            </div> */}
+                            {/* <TextField 
+                                id="outlined-basic"
+                                variant="outlined"
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                value={searchTerm}
+                                placeholder="Search by title or description"
+                                sx={{
+                                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#3f51b5', // customize the border color
+                                    borderWidth: '2px', // customize the border thickness
+                                    },
+                                }}
+                            /> */}
+                            {/* <div>
+                                <TextField 
+                                    id="outlined-basic"
+                                    variant="outlined"
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    value={searchTerm}
+                                    placeholder="Search by title or description"
+                                    sx={{
+                                        '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: '#3f51b5', // customize the border color
+                                        borderWidth: '2px', // customize the border thickness
+                                        },
+                                    }}
+                                />
+                            </div> */}
+                        </FormControl>
+                        <FormControl sx={{ m: 1, minWidth: 135 }} size="small">
+                            {/* <InputLabel id="demo-select-small-label">Status Filter</InputLabel> */}
+                            <TextField 
+                                id="outlined-basic"
+                                variant="outlined"
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                value={searchTerm}
+                                placeholder="Search by title/description"
+                                sx={{
+                                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#3f51b5', // customize the border color
+                                    borderWidth: '2px', // customize the border thickness
+                                    },
+                                    input : {
+                                        padding: "8.5px !important"
+                                    }
+                                }}
+                            />
                         </FormControl>
                     </div>
                 </div>

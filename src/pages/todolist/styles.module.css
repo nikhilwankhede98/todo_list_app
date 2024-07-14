@@ -166,3 +166,14 @@
 .form-dialog button:hover {
     background-color: #0056b3;
 }
+
+.input_field {
+	outline: none;
+	border: 1px solid light-dark(rgb(118, 118, 118), rgb(133, 133, 133));
+	width: 100%;
+	padding: 15px;
+	border-radius: 4px;
+	background-color: transparent;
+	margin: 5px 0;
+	font-size: 14px;
+}
