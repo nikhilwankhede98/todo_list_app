@@ -7,6 +7,8 @@ import { Typography, DialogTitle, Dialog, DialogContent, DialogContentText } fro
 // import DialogContent from '@mui/material/DialogContent';
 // import DialogContentText from '@mui/material/DialogContentText';
 import styles from "./styles.module.css";
+import { CustomSnackbar } from '../../components'
+
 
 const TodoDialogComponent = ({ todos= [], dialogInfo, setDialogInfo, updateTodo = () => {}, addTodo = () => {}, getStatusColor= () => {}, handleChangeDialogInfo = () => {}, handleTodoUpdate= () => {}, addNewTodo= () => {}, activeStatusBtnStyle= () => {}, getCurrentTodo }) => {
 
@@ -16,6 +18,19 @@ const TodoDialogComponent = ({ todos= [], dialogInfo, setDialogInfo, updateTodo 
     // const { name= "", description= "", status= "To Do" } = getCurrentTodo(dialogTodoId)
 
     const [error, setError] = useState("");
+
+    const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+	const [snackbarMsg, setSnackbarMsg] = useState("");
+	const [snackbarType, setSnackbarType] = useState("");
+
+	const handleSnackbarClose = (event, reason) => {
+		if (reason === 'clickaway') {
+		return;
+		}
+		setSnackbarMsg("")
+		setSnackbarType("")
+		setIsSnackbarOpen(false);
+	};
 
     const [currentTodoInfo, setCurrentTodoInfo] = useState({
         todoName: currentTodoName,
@@ -30,16 +45,43 @@ const TodoDialogComponent = ({ todos= [], dialogInfo, setDialogInfo, updateTodo 
     console.log('666', getCurrentTodo(dialogTodoId));
 
     const todoInfoItems = [
-        { label: "Name", value: currentTodoName },
+        { label: "Title", value: currentTodoName },
         { label: "Description", value: currentTodoDescription },
         { label: "Status", value: currentTodoStatus },
     ]
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        console.log('xyz', { currentTodoName, currentTodoDescription });
+        if ((currentTodoName === "" ||currentTodoDescription === "")) {
+            setIsSnackbarOpen(true)
+			setSnackbarMsg("Please add a title and description for your Todo")
+			setSnackbarType("error")
+        } else {
+            handleSnackbarClose()
+            if (dialogType === "add") {
+                addTodo({
+                    name: currentTodoName,
+                    description: currentTodoDescription,
+                    status: currentTodoStatus 
+                }
+                )
+            } else {
+                updateTodo(dialogTodoId, {
+                    name: currentTodoName,
+                    description: currentTodoDescription,
+                    status: currentTodoStatus    
+                })
+            }
+            handleChangeDialogInfo()
+        }
+    }
 
     const renderDialogContent = () => {
         if (dialogType === "add" || dialogType === "edit") {
             return (
                 // <h1>{dialogType}</h1>
-                <form className={styles.form_container} onSubmit={() => {}}>
+                <form className={styles.form_container} onSubmit={handleSubmit}>
                     <h1 style= {{ margin: "0px", paddingBottom: "15px" }}>
                         {`${dialogType.charAt(0).toUpperCase() + dialogType.slice(1)}`}
                         {dialogType === "edit" ? (
@@ -55,13 +97,13 @@ const TodoDialogComponent = ({ todos= [], dialogInfo, setDialogInfo, updateTodo 
                     </h1>
                     <input
                         type="name"
-                        placeholder="Name"
+                        placeholder="Title"
                         name="name"
                         // onChange={(e) => handleTodoUpdate(dialogTodoId, e.target.value, "name")}
                         // onChange={(e) => setCurrentTodoInfo(...currentTodoInfo, todoName)}
                         onChange={(e) => handleChangeDialogInfo(dialogType, isDialogOpen, e.target.value, currentTodoDescription, currentTodoStatus, dialogTodoId)}
                         value= {currentTodoName || ""}
-                        required
+                        // required
                         className={styles.input}
                     />
                     <input
@@ -72,7 +114,7 @@ const TodoDialogComponent = ({ todos= [], dialogInfo, setDialogInfo, updateTodo 
                         // onChange={(e) => handleTodoUpdate(dialogTodoId, e.target.value, "description")}
                         onChange={(e) => handleChangeDialogInfo(dialogType, isDialogOpen, currentTodoName, e.target.value, currentTodoStatus, dialogTodoId)}
                         value={currentTodoDescription || ""}
-                        required
+                        // required
                         className={styles.input}
                     />
                     {/* {error && <div className={styles.error_msg}>{error}</div>} */}
@@ -96,38 +138,7 @@ const TodoDialogComponent = ({ todos= [], dialogInfo, setDialogInfo, updateTodo 
                     <button 
                         type="submit"
                         className={styles.green_btn}
-                        onClick={() => {
-                            if (dialogType === "add") {
-                                // addNewTodo({
-                                //     id: todos.length + 1,
-                                //     name: currentTodoName,
-                                //     description: currentTodoDescription,
-                                //     status: currentTodoStatus    
-                                // })
-                                addTodo({
-                                    name: currentTodoName,
-                                    description: currentTodoDescription,
-                                    status: currentTodoStatus 
-                                }
-                                )
-                            } else {
-                                // handleTodoUpdate(
-                                //     dialogTodoId,
-                                //     {
-                                //         name: currentTodoName,
-                                //         description: currentTodoDescription,
-                                //         status: currentTodoStatus    
-                                //     }
-                                // )
-                                console.log('888updated', dialogTodoId);
-                                updateTodo(dialogTodoId, {
-                                    name: currentTodoName,
-                                    description: currentTodoDescription,
-                                    status: currentTodoStatus    
-                                })
-                            }
-                            handleChangeDialogInfo()
-                    }}>
+                    >
                         {dialogType.toUpperCase()}
                     </button>
                 </form>
@@ -179,14 +190,22 @@ const TodoDialogComponent = ({ todos= [], dialogInfo, setDialogInfo, updateTodo 
     }
 
     return (
-        <Dialog onClose={() => handleChangeDialogInfo()} open={isDialogOpen}>
-            {/* <DialogTitle>{currentTodoName}</DialogTitle> */}
-            <DialogContent>
-                <DialogContentText>
-                    {renderDialogContent()} 
-                </DialogContentText>
-            </DialogContent>
-        </Dialog>
+        <>
+            <Dialog onClose={() => handleChangeDialogInfo()} open={isDialogOpen}>
+                {/* <DialogTitle>{currentTodoName}</DialogTitle> */}
+                <DialogContent>
+                    <DialogContentText>
+                        {renderDialogContent()} 
+                    </DialogContentText>
+                </DialogContent>
+            </Dialog>
+            <CustomSnackbar
+				open={isSnackbarOpen}
+				handleClose={handleSnackbarClose}
+				message={snackbarMsg}
+				snackbarType= {snackbarType}
+			/>
+        </>
     )
 }
 

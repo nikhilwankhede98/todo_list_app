@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { TodoDialogComponent } from "../../components"
+import { TodoDialogComponent, CustomSnackbar } from "../../components"
 import {InputLabel, MenuItem, FormControl, Select} from '@mui/material';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
@@ -36,6 +36,19 @@ const TodosPage = ({ isLoggedIn, userId = null }) => {
         {id: 17, name: "Todo 17", description: "Todo 17 description", status: "To Do"},
         {id: 18, name: "Todo 18", description: "Todo 18 description", status: "In Progress"},
     ])
+
+    const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+	const [snackbarMsg, setSnackbarMsg] = useState("");
+	const [snackbarType, setSnackbarType] = useState("");
+
+	const handleSnackbarClose = (event, reason) => {
+		if (reason === 'clickaway') {
+		return;
+		}
+		setSnackbarMsg("")
+		setSnackbarType("")
+		setIsSnackbarOpen(false);
+	};
 
     useEffect(() => {
         if ((!isLoggedIn || !userId)) navigate("/login")
@@ -130,15 +143,21 @@ const TodosPage = ({ isLoggedIn, userId = null }) => {
         // if (!taskInput.trim() || !taskDescriptionInput.trim()) return;
         const { name, description, status } = todoData
         try {
-          const docRef = await addDoc(collection(firestore, 'todos'), {
-            userId,
-            name,
-            description,
-            status,
-            createdAt: new Date(),
-          });
+            const docRef = await addDoc(collection(firestore, 'todos'), {
+                userId,
+                name,
+                description,
+                status,
+                createdAt: new Date(),
+            });
+            setIsSnackbarOpen(true)
+            setSnackbarMsg("Todo added successfully!")
+            setSnackbarType("success")
         } catch (error) {
-          console.error('Error adding todo:', error.message);
+            console.error('Error adding todo:', error.message);
+            setIsSnackbarOpen(true)
+            setSnackbarMsg("Error while adding Todo")
+            setSnackbarType("error")
         }
       };
 
@@ -168,9 +187,16 @@ const TodosPage = ({ isLoggedIn, userId = null }) => {
 
     const deleteTodo = async (todoId) => {
         try {
-          await deleteDoc(doc(firestore, 'todos', todoId));
+            await deleteDoc(doc(firestore, 'todos', todoId));
+            setIsSnackbarOpen(true)
+            setSnackbarMsg("Todo deleted successfully!")
+            setSnackbarType("success")
+
         } catch (error) {
-          console.error('Error removing task: ', error.message);
+            setIsSnackbarOpen(true)
+            setSnackbarMsg("Error while deleting Todo")
+            setSnackbarType("error")
+            console.error('Error removing task: ', error.message);
         }
     };
 
@@ -206,7 +232,13 @@ const TodosPage = ({ isLoggedIn, userId = null }) => {
         try {
             const taskDocRef = doc(firestore, 'todos', todoId);
             await updateDoc(taskDocRef, updatedData);
+            setIsSnackbarOpen(true)
+            setSnackbarMsg("Todo details updated successfully!")
+            setSnackbarType("success")
         } catch (error) {
+            setIsSnackbarOpen(true)
+            setSnackbarMsg("Error while updating Todo")
+            setSnackbarType("error")
             console.error('Error updating task status: ', error.message);
         }
     };
@@ -359,6 +391,12 @@ const TodosPage = ({ isLoggedIn, userId = null }) => {
                   addTodo= {addTodo}
                 />
             </div>
+            <CustomSnackbar
+				open={isSnackbarOpen}
+				handleClose={handleSnackbarClose}
+				message={snackbarMsg}
+				snackbarType= {snackbarType}
+			/>
         </>
     )
     
