@@ -53,9 +53,9 @@ const TodoDialogComponent = ({ todos= [], dialogInfo, setDialogInfo, updateTodo 
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log('xyz', { currentTodoName, currentTodoDescription });
-        if ((currentTodoName === "" ||currentTodoDescription === "")) {
+        if (currentTodoName === "") {
             setIsSnackbarOpen(true)
-			setSnackbarMsg("Please add a title and description for your Todo")
+			setSnackbarMsg("Please add a title for your Todo")
 			setSnackbarType("error")
         } else {
             handleSnackbarClose()

@@ -66,11 +66,11 @@ const Loginpage = ({ setIsLoggedIn, setIsLoading= () => {}, isLoading= false }) 
 		try {
 			const response = await signInWithEmailAndPassword(auth, email, password)
 			if (response?.user) {
-				setIsLoading(false)
 				setIsSnackbarOpen(true)
 				setSnackbarMsg("User logged in successfully")
 				setSnackbarType("success")
 				setTimeout(() => {
+					setIsLoading(false)
 					setIsLoggedIn(true)
 					navigate('/todos')
 				}, 1000)

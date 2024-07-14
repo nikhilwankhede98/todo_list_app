@@ -58,11 +58,11 @@ const SignupPage = ({ setIsLoading = () => {}, isLoading= false }) => {
 		try {
 			const response = await createUserWithEmailAndPassword(auth, email, password)
 			if (response?.user) {
-				setIsLoading(false)
 				setIsSnackbarOpen(true)
 				setSnackbarMsg("User created in successfully")
 				setSnackbarType("success")
 				setTimeout(() => {
+					setIsLoading(false)
 					navigate('/login')
 				}, 1000)
 			}
