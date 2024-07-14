@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 import { auth } from "../../api/firebase"
@@ -19,7 +18,6 @@ const Loginpage = ({ setIsLoggedIn, setIsLoading= () => {}, isLoading= false }) 
 
 	const { email, password } = userInfo
 	
-	const [error, setError] = useState("");
 
 	const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 	const [snackbarMsg, setSnackbarMsg] = useState("");
@@ -39,13 +37,6 @@ const Loginpage = ({ setIsLoggedIn, setIsLoading= () => {}, isLoading= false }) 
 		setUserInfo({
 			...userInfo,
 			[name]: value
-		})
-	}
-
-	const clearUserInfo = () => {
-		setUserInfo({
-			email: "",
-			password: ""
 		})
 	}
 
@@ -96,12 +87,10 @@ const Loginpage = ({ setIsLoggedIn, setIsLoading= () => {}, isLoading= false }) 
 							<form className={styles.form_container} onSubmit={handleSubmit}>
 								<h1>Login to Your Account</h1>
 								<input
-									// type="email"
 									placeholder="Email"
 									name="email"
 									onChange={handleInputChange}
 									value={email}
-									// required
 									className={styles.input}
 								/>
 								<input
@@ -110,10 +99,8 @@ const Loginpage = ({ setIsLoggedIn, setIsLoading= () => {}, isLoading= false }) 
 									name="password"
 									onChange={handleInputChange}
 									value={password}
-									// required
 									className={styles.input}
 								/>
-								{error && <div className={styles.error_msg}>{error}</div>}
 								<button type="submit" className={styles.green_btn}>
 									LOGIN
 								</button>

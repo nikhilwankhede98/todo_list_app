@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { TodoDialogComponent, CustomSnackbar, Loader } from "../../components"
 import {InputLabel, MenuItem, FormControl, Select, TextField} from '@mui/material';
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
 import styles from "./styles.module.css";
 import AddIcon from './assets/add_icon.png'
 import EditIcon from './assets/edit_icon.svg'
@@ -53,20 +50,6 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
         return () => unsubscribe();
     }, [userId]);
 
-    // useEffect(() => {
-    //     const unsubscribe = firestore.collection('todos').onSnapshot(snapshot => {
-    //       const todosList = snapshot.docs.map(doc => ({
-    //         id: doc.id,
-    //         ...doc.data()
-    //       }));
-    //       console.log('888', { todosList });
-    //       setTodos(todosList);
-    //     });
-    
-    //     return () => unsubscribe();
-    // }, []);
-
-
     const getTodosByStatusFilter = () => {
         let todoListByStatusFilter = todos.filter(todo => {
             if (selectedStatusFilter === "All") return todos
@@ -78,7 +61,6 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
                 todo.description.toLowerCase().includes(searchTerm.toLowerCase())
             )
         }
-        console.log('444', { todoListByStatusFilter });
         return todoListByStatusFilter
     }
 
@@ -105,42 +87,9 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
         })  
     }
 
-    const { dialogType = "add", isDialogOpen = false, currentTodoName = "", currentTodoDescription="", currentTodoStatus= "To Do", dialogTodoId = "" } = dialogInfo
-    console.log('333', { dialogInfo });
-
-
-    // const addTodo = async (todoData) => {
-    //     console.log('888add', { todoData });
-    //     const { name, description, status } = todoData
-    //     try {
-    //       await firestore.collection('todos').add({
-    //         name,
-    //         description,
-    //         status
-    //       });
-    //     //   setTodo('');
-    //     } catch (error) {
-    //       console.error('Error adding todo:', error);
-    //     }
-    // };
-
-    // const addTodo = async (todoData) => {
-    //     const { name, description, status } = todoData
-    //     try {
-    //       const docRef = await addDoc(collection(firestore, 'todos'), {
-    //         name,
-    //         description,
-    //         status,
-    //         createdAt: new Date(),
-    //       });
-    //       console.log('321', { docRef });
-    //     } catch (error) {
-    //         console.error('Error adding todo:', error);
-    //     }
-    // };
+    const { dialogTodoId = "" } = dialogInfo
 
     const addTodo = async (todoData) => {
-        // if (!taskInput.trim() || !taskDescriptionInput.trim()) return;
         const { name, description, status } = todoData
         setIsLoading(true)
         try {
@@ -164,30 +113,6 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
         }
       };
 
-    // const deleteTodo = (id) => {
-    //     console.log('888', { id });
-    //     const filteredTodos = todos.filter(todo => todo.id !== id)
-    //     setTodos(filteredTodos)
-    // }
-
-    // const deleteTodo = async (id) => {
-    //     console.log('888delete', id);
-    //     try {
-    //       await firestore.collection('todos').doc(id).delete();
-    //     } catch (error) {
-    //       console.error('Error deleting todo:', error);
-    //     }
-    // };
-
-    // const deleteTodo = async (todoId) => {
-    //     console.log('321', { todoId });
-    //     try {
-    //       await deleteDoc(collection(firestore, 'todos'), todoId);
-    //     } catch (error) {
-    //       console.error('Error removing todo: ', error.message);
-    //     }
-    // };
-
     const deleteTodo = async (todoId) => {
         setIsLoading(true)
         try {
@@ -205,34 +130,6 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
             console.error('Error removing task: ', error.message);
         }
     };
-
-    // const updateTodo = async (id, updatedData) => {
-    //     const { name, description, status } = updatedData
-    //     console.log('888', { id, updatedData });
-    //     try {
-    //         await firestore.collection('todos').doc(id).update({
-    //             name,
-    //             description,
-    //             status
-    //         });
-    //     } catch (error) {
-    //         console.error('Error updating todo:', error);
-    //     }
-    // }
-
-    // const updateTodo = async (todoId, updatedData) => {
-    //     // const { name, description, status } = updatedData
-    //     console.log('321', { updatedData });
-
-    //     try {
-    //         const taskDocRef = doc(firestore, 'todos', todoId);
-    //         console.log('321', taskDocRef);
-    //         await updateDoc(taskDocRef, { userId, ...updatedData });
-    //     } catch (error) {
-    //         console.log('321', { error });
-    //         console.error('Error updating todo: ', error.message);
-    //     }
-    // };
 
     const updateTodo = async (todoId, updatedData) => {
         setIsLoading(true)
@@ -253,11 +150,9 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
     };
 
     const handleTodoUpdate = (id, newValue, key= "") => {
-        console.log('555', { id, newValue, key });
         let todosCopy = [...todos]
         const index = todosCopy.findIndex(todo => todo.id === id);
         if (index !== -1) {
-            // const updatedTodo = { ...todosCopy[index], [key]: newValue };
             const updatedTodo = { ...todosCopy[index], ...newValue };
             
             todosCopy[index] = updatedTodo;
@@ -276,7 +171,6 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
     }
 
     const getStatusColor = (status) => {
-        console.log('111', { status });
         if (status === "To Do") return "#f36363"
         if (status === "In Progress") return "orange"
         return "green"
@@ -286,19 +180,11 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
         return todos.find(todo => todo.id === dialogTodoId) || {}
     }
 
-    const todoStatusConfigList = () => {
-        return ["To Do", "In Progress", "Done"]
-    }
-
     const activeStatusBtnStyle = (statusOption, currentTodoStatus) => {
         return statusOption === currentTodoStatus ? 
             { backgroundColor: getStatusColor(statusOption), color: "black", padding: "4px 10px" } : 
             { border: `2px solid ${getStatusColor(statusOption)}`, opacity: 0.6 }
     }
-
-    console.log('777', { todos });
-
-    console.log('123', { isLoggedIn, isLoading });
 
     return (
         <>
@@ -345,44 +231,6 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
                                     </MenuItem>
                                 ))}
                             </Select>
-                            
-                            {/* <div>
-                                <input
-                                    type="text"
-                                    placeholder="Search by title or description"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className={styles.input_field}
-                                />
-                            </div> */}
-                            {/* <TextField 
-                                id="outlined-basic"
-                                variant="outlined"
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                value={searchTerm}
-                                placeholder="Search by title or description"
-                                sx={{
-                                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: '#3f51b5', // customize the border color
-                                    borderWidth: '2px', // customize the border thickness
-                                    },
-                                }}
-                            /> */}
-                            {/* <div>
-                                <TextField 
-                                    id="outlined-basic"
-                                    variant="outlined"
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    value={searchTerm}
-                                    placeholder="Search by title or description"
-                                    sx={{
-                                        '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: '#3f51b5', // customize the border color
-                                        borderWidth: '2px', // customize the border thickness
-                                        },
-                                    }}
-                                />
-                            </div> */}
                         </FormControl>
                         <FormControl 
                             sx={{ 
@@ -399,7 +247,6 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
                             }}
                             size="small"
                         >
-                            {/* <InputLabel id="demo-select-small-label">Status Filter</InputLabel> */}
                             <TextField 
                                 id="outlined-basic"
                                 variant="outlined"
@@ -452,15 +299,7 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
                                             }} />
                                         </div>
                                     </div>
-                                    <p 
-                                        // style= {{
-                                        //     margin: "0px",
-                                        //     marginBottom: "5px",
-                                        //     whiteSpace: "nowrap",         /* Prevents the text from wrapping */
-                                        //     overflow: "hidden",            /* Hides any text that exceeds the width */
-                                        //     textOverflow: "ellipsis",     /* Displays an ellipsis (...) to indicate overflow */
-                                        //     display: "block",              /* Ensures the ellipsis works as expected */
-                                        // }}
+                                    <p
                                         className={styles.todo_description}
                                     >
                                         {todo.description}
@@ -474,7 +313,6 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
                                                     style= {activeStatusBtnStyle(statusOption, todo.status)}
                                                     onClick={(event) => {
                                                         event.stopPropagation()
-                                                        // handleTodoUpdate(todo.id, { ...todo, status: statusOption })
                                                         updateTodo(todo.id, { ...todo, status: statusOption })
                                                     }}
                                                 >
@@ -489,7 +327,6 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", flexDirection: "column" }}>
                             <p style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>No todos added yet!</p>
                             <p>Start by adding your first todo item.</p>
-                            {/* You can add a button to add todos or other UI elements */}
                         </div>
                     )}
                 </div>

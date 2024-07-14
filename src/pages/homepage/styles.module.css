@@ -16,7 +16,6 @@
     transform: translateY(-50%);
     max-width: calc(100% - 40px); /* Adjust max-width based on padding */
     color: #fff; /* Text color */
-    /* background-color: rgba(0, 0, 0, 0.5); Semi-transparent background */
     padding: 20px; /* Add padding for spacing */
 }
 

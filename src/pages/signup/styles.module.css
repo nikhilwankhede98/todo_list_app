@@ -1,5 +1,4 @@
 .signup_container {
-	/* width: 100%; */
 	min-height: calc(100vh - 64px);
 	background-color: #efe9ec;
 	display: flex;
@@ -102,7 +101,6 @@
 }
 
 @media (max-width: 768px) {
-	/* CSS rules to apply when screen width is 768px or less */
 	.signup_form_container {
 		flex-direction: column;
 	}

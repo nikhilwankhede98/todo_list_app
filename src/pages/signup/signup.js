@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 import { auth } from "../../api/firebase"
@@ -15,7 +14,6 @@ const SignupPage = ({ setIsLoading = () => {}, isLoading= false }) => {
     )
 
 	const { email, password } = userInfo
-	const [error, setError] = useState("");
 	const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 	const [snackbarMsg, setSnackbarMsg] = useState("");
 	const [snackbarType, setSnackbarType] = useState("");
@@ -32,9 +30,7 @@ const SignupPage = ({ setIsLoading = () => {}, isLoading= false }) => {
 	const navigate = useNavigate();
 
     const handleInputChange = (e) => {
-        console.log('111', { e });
         const { name, value } = e.target
-        console.log({ name, value });
         setUserInfo({
           ...userInfo,
           [name]: value
@@ -42,7 +38,6 @@ const SignupPage = ({ setIsLoading = () => {}, isLoading= false }) => {
     }
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		console.log("321", { email, password });
 		if ((email === "" || password === "")) {
 			setIsSnackbarOpen(true)
 			setSnackbarMsg("Please enter your email and password")
@@ -58,6 +53,7 @@ const SignupPage = ({ setIsLoading = () => {}, isLoading= false }) => {
 		try {
 			const response = await createUserWithEmailAndPassword(auth, email, password)
 			if (response?.user) {
+				setIsLoading(false)
 				setIsSnackbarOpen(true)
 				setSnackbarMsg("User created in successfully")
 				setSnackbarType("success")
@@ -66,7 +62,6 @@ const SignupPage = ({ setIsLoading = () => {}, isLoading= false }) => {
 					navigate('/login')
 				}, 1000)
 			}
-			console.log('777', { response }, "account created new");
 		} catch (error) {
 			console.log('777', { error });
 			setIsLoading(false)
@@ -77,24 +72,6 @@ const SignupPage = ({ setIsLoading = () => {}, isLoading= false }) => {
 			}
 		}
 	}
-
-	// const handleSubmit = async (e) => {
-	// 	e.preventDefault();
-	// 	try {
-	// 		const url = "http://localhost:8080/api/users";
-	// 		const { data: res } = await axios.post(url, data);
-	// 		navigate("/login");
-	// 		console.log(res.message);
-	// 	} catch (error) {
-	// 		if (
-	// 			error.response &&
-	// 			error.response.status >= 400 &&
-	// 			error.response.status <= 500
-	// 		) {
-	// 			setError(error.response.data.message);
-	// 		}
-	// 	}
-	// };
 
 	return (
 		<>
@@ -114,12 +91,10 @@ const SignupPage = ({ setIsLoading = () => {}, isLoading= false }) => {
 								<form className={styles.form_container} onSubmit={handleSubmit}>
 									<h1>Create Account</h1>
 									<input
-										// type="email"
 										placeholder="Email"
 										name="email"
 										onChange={handleInputChange}
 										value={userInfo.email}
-										// required
 										className={styles.input}
 									/>
 									<input
@@ -128,10 +103,8 @@ const SignupPage = ({ setIsLoading = () => {}, isLoading= false }) => {
 										name="password"
 										onChange={handleInputChange}
 										value={userInfo.password}
-										// required
 										className={styles.input}
 									/>
-									{error && <div className={styles.error_msg}>{error}</div>}
 									<button type="submit" className={styles.green_btn}>
 										SIGNUP
 									</button>

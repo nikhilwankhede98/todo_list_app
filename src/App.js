@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react"
-import logo from './logo.svg';
-import { Header, Loader } from './components'
-import { Homepage, Loginpage, SignupPage, TodosPage, TodoItemPage } from './pages'
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { Header } from './components'
+import { Homepage, Loginpage, SignupPage, TodosPage } from './pages'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { auth } from "./api/firebase"
 
 function App() {
@@ -63,23 +62,8 @@ function App() {
                 isLoading= {isLoading}
               />
             }
-            // element={
-            //   isLoading ?
-            //     <Loader /> :
-            //     <TodosPage
-            //       isLoggedIn= {isLoggedIn}
-            //       userId= {user?.uid || null}
-            //       setIsLoading= {setIsLoading}
-            //     />
-            // }
             path="/todos"
           />
-          {/* <Route 
-            element={
-              <TodoItemPage />
-            }
-            path="/todo/:todoid"
-          /> */}
         </Routes>
       </BrowserRouter>
     </>

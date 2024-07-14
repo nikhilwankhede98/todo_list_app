@@ -3,7 +3,6 @@
     align-items: center;
     flex-direction: column;
     display: flex;
-    /* width: 100%; */
     padding: 15px 35px;
     height: calc(100vh - 64px);
     background-color: #efe9ec;
@@ -40,7 +39,6 @@
 
 .todo_list_content_box {
     height: 430px;
-    /* min-width: 1145px; */
     padding: 35px;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -55,7 +53,6 @@
 .todo_list_item {
     background-color: white;
     flex: 1 1 calc(33.33% - 20px);
-    /* max-width: calc(33.33% - 20px); */
     height: 100%;
     background-color: #f0f0f0;
     padding: 15px;
@@ -114,7 +111,6 @@
         .todo_status {
             padding: 4px 10px;
             width: fit-content;
-            /* margin-top: auto; */
             border-radius: 10px;
             margin-right: 5px;
         }
