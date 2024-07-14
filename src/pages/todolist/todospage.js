@@ -311,7 +311,19 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
                             src= {AddIcon}
                             onClick={() => {handleDialogInfo("add", true, "", "", "To Do", "")}}
                         />
-                        <FormControl sx={{ m: 1, minWidth: 135 }} size="small">
+                        <FormControl sx={{ 
+                            m: 1,
+                            minWidth: 135,
+                            '@media (max-width: 768px)': {
+                                minWidth: 140
+                            },
+                            '@media (max-width: 376px)': {
+                                minWidth: 100,
+                                maxWidth: 145
+                            }
+                            }} 
+                            size="small"
+                        >
                             <InputLabel id="demo-select-small-label">Status Filter</InputLabel>
                             <Select
                                 labelId="demo-select-small-label"
@@ -319,6 +331,13 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
                                 value={selectedStatusFilter}
                                 label="Status Filter"
                                 onChange={(event) => setSelectedStatusFilter(event.target.value)}
+                                sx={{
+                                    fontSize: "16px",
+                                    paddingRight: "25px",
+                                    '@media (max-width: 768px)': {
+                                        fontSize: "14px",
+                                    }
+                                }}
                             >
                                 {statusFilterOptions.map((option, index) => (
                                     <MenuItem key={index} value={option}>
@@ -365,21 +384,38 @@ const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoadi
                                 />
                             </div> */}
                         </FormControl>
-                        <FormControl sx={{ m: 1, minWidth: 135 }} size="small">
+                        <FormControl 
+                            sx={{ 
+                                m: 1,
+                                minWidth: 135,
+                                '@media (max-width: 376px)': {
+                                    maxWidth: 140,
+                                    minWidth: 100
+                                },
+                                '@media (max-width: 321px)': {
+                                    maxWidth: 90,
+                                    minWidth: 90
+                                }
+                            }}
+                            size="small"
+                        >
                             {/* <InputLabel id="demo-select-small-label">Status Filter</InputLabel> */}
                             <TextField 
                                 id="outlined-basic"
                                 variant="outlined"
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 value={searchTerm}
-                                placeholder="Search by title/description"
+                                placeholder="Search Todo"
                                 sx={{
                                     '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: '#3f51b5', // customize the border color
-                                    borderWidth: '2px', // customize the border thickness
+                                        fontSize: "10px !important"
                                     },
                                     input : {
-                                        padding: "8.5px !important"
+                                        padding: "8.5px !important",
+                                        fontSize: "14px !important",
+                                        '@media (max-width: 768px)': {
+                                            fontSize: "12px !important",
+                                        },
                                     }
                                 }}
                             />

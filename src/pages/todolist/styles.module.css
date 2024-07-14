@@ -4,7 +4,7 @@
     flex-direction: column;
     display: flex;
     /* width: 100%; */
-    padding: 0px 35px;
+    padding: 15px 35px;
     height: calc(100vh - 64px);
     background-color: #efe9ec;
 }
@@ -40,7 +40,7 @@
 
 .todo_list_content_box {
     height: 430px;
-    min-width: 1145px;
+    /* min-width: 1145px; */
     padding: 35px;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -54,8 +54,8 @@
 
 .todo_list_item {
     background-color: white;
-    flex: 1 1 calc(33.33% - 20px); /* Calculate width to show 3 cards per row with gap */
-    max-width: calc(33.33% - 20px); /* Ensure max-width respects the calculated width */
+    flex: 1 1 calc(33.33% - 20px);
+    /* max-width: calc(33.33% - 20px); */
     height: 100%;
     background-color: #f0f0f0;
     padding: 15px;
@@ -176,4 +176,57 @@
 	background-color: transparent;
 	margin: 5px 0;
 	font-size: 14px;
+}
+
+@media (max-width: 768px) {
+
+    .header_section {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
+        padding-bottom: 15px;
+
+        h1 {
+            font-size: 30px;
+            margin: 0px 0px 10px 0px !important;
+        }
+    }
+
+    .todo_list_content_box {
+        padding: 20px;
+    }
+
+    .todo_list_container {
+        padding: 15px 20px;
+    }
+}
+
+@media (max-width: 426px) {
+    .todo_list_content_box {
+        padding: 10px;
+    }
+
+    .todo_list_container {
+        padding: 10px;
+    }
+
+    .header_btns_wrapper {
+        gap: 0px;
+        img {
+            width: 30px;
+        }
+    }
+}
+
+@media (max-width: 376px) {
+    .todo_list_item {
+        min-width: 300px;
+    }
+}
+
+@media (max-width: 340px) {
+    .todo_list_item {
+        min-width: 250px;
+    }
 }

@@ -1,10 +1,11 @@
 .signup_container {
-	width: 100%;
+	/* width: 100%; */
 	min-height: calc(100vh - 64px);
 	background-color: #efe9ec;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	padding: 0px 20px;
 }
 
 .signup_form_container {
@@ -17,6 +18,7 @@
 }
 
 .left {
+	padding: 20px;
 	flex: 1;
 	display: flex;
 	flex-direction: column;
@@ -30,7 +32,7 @@
 .left h1 {
 	margin-top: 0;
 	color: white;
-	font-size: 35px;
+	font-size: 40px;
 	align-self: center;
 }
 
@@ -46,6 +48,7 @@
 }
 
 .form_container {
+	padding: 20px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -96,4 +99,61 @@
 	background-color: #3bb19b;
 	color: white;
 	margin: 10px;
+}
+
+@media (max-width: 768px) {
+	/* CSS rules to apply when screen width is 768px or less */
+	.signup_form_container {
+		flex-direction: column;
+	}
+
+	.right {
+		flex: 1;
+	}
+
+	.input {
+		width: 300px;
+	}
+
+	.form_container h1 {
+		font-size: 36px;
+	}
+
+	.left h1 {
+		font-size: 36px;
+	}
+}
+
+@media (max-width: 426px) {
+
+	.form_container {
+		padding: 10px
+	}
+
+	.form_container h1 {
+		font-size: 24px;
+	}
+
+	.left h1 {
+		font-size: 24px;
+	}
+
+	.input {
+		width: 250px;
+	}
+}
+
+@media (max-width: 376px) {
+
+	.form_container h1 {
+		font-size: 22px;
+	}
+
+	.left h1 {
+		font-size: 22px;
+	}
+
+	.input {
+		width: 225px;
+	}
 }
