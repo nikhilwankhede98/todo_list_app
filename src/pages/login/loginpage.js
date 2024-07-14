@@ -4,9 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 import { auth } from "../../api/firebase"
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { CustomSnackbar } from '../../components'
+import { CustomSnackbar, Loader } from '../../components'
 
-const Loginpage = ({ setIsLoggedIn }) => {
+const Loginpage = ({ setIsLoggedIn, setIsLoading= () => {}, isLoading= false }) => {
 
 	const navigate = useNavigate();
 
@@ -62,19 +62,22 @@ const Loginpage = ({ setIsLoggedIn }) => {
 	}
 
 	const handleLogin = async () => {
+		setIsLoading(true)
 		try {
 			const response = await signInWithEmailAndPassword(auth, email, password)
-			setIsLoggedIn(true)
 			if (response?.user) {
+				setIsLoading(false)
 				setIsSnackbarOpen(true)
 				setSnackbarMsg("User logged in successfully")
 				setSnackbarType("success")
 				setTimeout(() => {
+					setIsLoggedIn(true)
 					navigate('/todos')
-				}, 1500)
+				}, 1000)
 			}
 		} catch (error) {
 			console.log('777', { error });
+			setIsLoading(false)
 			if (error) {
 				setIsSnackbarOpen(true)
 				setSnackbarMsg("Please enter a valid email and password")
@@ -86,43 +89,47 @@ const Loginpage = ({ setIsLoggedIn }) => {
 	return (
 		<>
 			<div className={styles.login_container}>
-				<div className={styles.login_form_container}>
-					<div className={styles.left}>
-						<form className={styles.form_container} onSubmit={handleSubmit}>
-							<h1>Login to Your Account</h1>
-							<input
-								// type="email"
-								placeholder="Email"
-								name="email"
-								onChange={handleInputChange}
-								value={email}
-								// required
-								className={styles.input}
-							/>
-							<input
-								type="password"
-								placeholder="Password"
-								name="password"
-								onChange={handleInputChange}
-								value={password}
-								// required
-								className={styles.input}
-							/>
-							{error && <div className={styles.error_msg}>{error}</div>}
-							<button type="submit" className={styles.green_btn}>
-								LOGIN
-							</button>
-						</form>
+				{isLoading ? 
+					<Loader /> : (
+					<div className={styles.login_form_container}>
+						<div className={styles.left}>
+							<form className={styles.form_container} onSubmit={handleSubmit}>
+								<h1>Login to Your Account</h1>
+								<input
+									// type="email"
+									placeholder="Email"
+									name="email"
+									onChange={handleInputChange}
+									value={email}
+									// required
+									className={styles.input}
+								/>
+								<input
+									type="password"
+									placeholder="Password"
+									name="password"
+									onChange={handleInputChange}
+									value={password}
+									// required
+									className={styles.input}
+								/>
+								{error && <div className={styles.error_msg}>{error}</div>}
+								<button type="submit" className={styles.green_btn}>
+									LOGIN
+								</button>
+							</form>
+						</div>
+						<div className={styles.right}>
+							<h1>New Here ?</h1>
+							<Link to="/signup">
+								<button type="button" className={styles.white_btn}>
+									SIGNUP
+								</button>
+							</Link>
+						</div>
 					</div>
-					<div className={styles.right}>
-						<h1>New Here ?</h1>
-						<Link to="/signup">
-							<button type="button" className={styles.white_btn}>
-								SIGNUP
-							</button>
-						</Link>
-					</div>
-				</div>
+					)
+				}
 			</div>
 			<CustomSnackbar
 				open={isSnackbarOpen}

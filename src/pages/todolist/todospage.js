@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { TodoDialogComponent, CustomSnackbar } from "../../components"
+import { TodoDialogComponent, CustomSnackbar, Loader } from "../../components"
 import {InputLabel, MenuItem, FormControl, Select} from '@mui/material';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
@@ -12,30 +12,11 @@ import DeleteIcon from './assets/delete_icon.svg'
 import { firestore } from '../../api/firebase';
 import { collection, addDoc, updateDoc, doc, deleteDoc, query, where, onSnapshot } from 'firebase/firestore';
 
-const TodosPage = ({ isLoggedIn, userId = null }) => {
+const TodosPage = ({ isLoggedIn, userId = null, setIsLoading = () => {}, isLoading= false }) => {
 
     const navigate = useNavigate();
 
-    const [todos, setTodos] = useState([
-        {id: 1, name: "Todo 1", description: "Todo 1 description description description description description", status: "To Do"},
-        {id: 2, name: "Todo 2", description: "Todo 2 description", status: "In Progress"},
-        {id: 3, name: "Todo 3", description: "Todo 3 description", status: "To Do"},
-        {id: 4, name: "Todo 4", description: "Todo 4 description", status: "Done"},
-        {id: 5, name: "Todo 5", description: "Todo 5 description", status: "Done"},
-        {id: 6, name: "Todo 6", description: "Todo 6 description", status: "To Do"},
-        {id: 7, name: "Todo 7", description: "Todo 7 description", status: "To Do"},
-        {id: 8, name: "Todo 8", description: "Todo 8 description", status: "In Progress"},
-        {id: 9, name: "Todo 9", description: "Todo 9 description", status: "To Do"},
-        {id: 10, name: "Todo 10", description: "Todo 10 description", status: "In Progress"},
-        {id: 11, name: "Todo 11", description: "Todo 11 description", status: "Done"},
-        {id: 12, name: "Todo 12", description: "Todo 12 description", status: "To Do"},
-        {id: 13, name: "Todo 13", description: "Todo 13 description", status: "In Progress"},
-        {id: 14, name: "Todo 14", description: "Todo 14 description", status: "To Do"},
-        {id: 15, name: "Todo 15", description: "Todo 15 description", status: "In Progress"},
-        {id: 16, name: "Todo 16", description: "Todo 16 description", status: "Done"},
-        {id: 17, name: "Todo 17", description: "Todo 17 description", status: "To Do"},
-        {id: 18, name: "Todo 18", description: "Todo 18 description", status: "In Progress"},
-    ])
+    const [todos, setTodos] = useState([])
 
     const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 	const [snackbarMsg, setSnackbarMsg] = useState("");
@@ -55,14 +36,17 @@ const TodosPage = ({ isLoggedIn, userId = null }) => {
     }, [isLoggedIn, userId])
 
     useEffect(() => {
+        setIsLoading(true)
         const unsubscribe = onSnapshot(query(collection(firestore, 'todos'), where('userId', '==', userId)), (snapshot) => {
-          const todosList = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          setTodos(todosList);
+            const todosList = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setTodos(todosList);
+            setIsLoading(false)
+
         });
-    
+        setIsLoading(false)
         return () => unsubscribe();
     }, [userId]);
 
@@ -80,6 +64,15 @@ const TodosPage = ({ isLoggedIn, userId = null }) => {
     // }, []);
 
     const [selectedStatusFilter, setSelectedStatusFilter] = useState("All")
+
+    const getTodosByStatusFilter = () => {
+        const todoListByStatusFilter = todos.filter(todo => {
+            if (selectedStatusFilter === "All") return todos
+            return todo.status === selectedStatusFilter
+        })
+        console.log('444', { todoListByStatusFilter });
+        return todoListByStatusFilter
+    }
 
     const statusFilterOptions = ["All", "To Do", "In Progress", "Done"]
 
@@ -142,6 +135,7 @@ const TodosPage = ({ isLoggedIn, userId = null }) => {
     const addTodo = async (todoData) => {
         // if (!taskInput.trim() || !taskDescriptionInput.trim()) return;
         const { name, description, status } = todoData
+        setIsLoading(true)
         try {
             const docRef = await addDoc(collection(firestore, 'todos'), {
                 userId,
@@ -150,10 +144,12 @@ const TodosPage = ({ isLoggedIn, userId = null }) => {
                 status,
                 createdAt: new Date(),
             });
+            setIsLoading(false)
             setIsSnackbarOpen(true)
             setSnackbarMsg("Todo added successfully!")
             setSnackbarType("success")
         } catch (error) {
+            setIsLoading(false)
             console.error('Error adding todo:', error.message);
             setIsSnackbarOpen(true)
             setSnackbarMsg("Error while adding Todo")
@@ -186,13 +182,16 @@ const TodosPage = ({ isLoggedIn, userId = null }) => {
     // };
 
     const deleteTodo = async (todoId) => {
+        setIsLoading(true)
         try {
             await deleteDoc(doc(firestore, 'todos', todoId));
+            setIsLoading(false)
             setIsSnackbarOpen(true)
             setSnackbarMsg("Todo deleted successfully!")
             setSnackbarType("success")
 
         } catch (error) {
+            setIsLoading(false)
             setIsSnackbarOpen(true)
             setSnackbarMsg("Error while deleting Todo")
             setSnackbarType("error")
@@ -229,13 +228,16 @@ const TodosPage = ({ isLoggedIn, userId = null }) => {
     // };
 
     const updateTodo = async (todoId, updatedData) => {
+        setIsLoading(true)
         try {
             const taskDocRef = doc(firestore, 'todos', todoId);
             await updateDoc(taskDocRef, updatedData);
+            setIsLoading(false)
             setIsSnackbarOpen(true)
             setSnackbarMsg("Todo details updated successfully!")
             setSnackbarType("success")
         } catch (error) {
+            setIsLoading(false)
             setIsSnackbarOpen(true)
             setSnackbarMsg("Error while updating Todo")
             setSnackbarType("error")
@@ -289,7 +291,7 @@ const TodosPage = ({ isLoggedIn, userId = null }) => {
 
     console.log('777', { todos });
 
-    console.log('123', { isLoggedIn });
+    console.log('123', { isLoggedIn, isLoading });
 
     return (
         <>
@@ -298,6 +300,7 @@ const TodosPage = ({ isLoggedIn, userId = null }) => {
                     <h1 style= {{ margin: "0px" }}>TODO <span style={{ color: "#1976d2" }}>List</span></h1>
                     <div className= {styles.header_btns_wrapper}>
                         <img
+                            alt= "add-icon"
                             src= {AddIcon}
                             onClick={() => {handleDialogInfo("add", true, "", "", "To Do", "")}}
                         />
@@ -319,64 +322,76 @@ const TodosPage = ({ isLoggedIn, userId = null }) => {
                         </FormControl>
                     </div>
                 </div>
-                <div className={styles.todo_list_content_box}>
-                    {todos.map(todo => (
-                        <div
-                            key= {todo.id}
-                            className= {styles.todo_list_item}
-                            style= {{
-                                borderLeft: `5px solid ${getStatusColor(todo.status)}`,
-                                display: (selectedStatusFilter === "All" || selectedStatusFilter === todo.status) ? "inline-flex" : "none"
-                            }}
-                            onClick={() => {handleDialogInfo("view", true, todo.name, todo.description, todo.status, todo.id)}}
-                        >
-                            <div className={styles.todo_action_section}>
-                                <p className={styles.todo_name} >{todo.name}</p>
-                                <div className={styles.icon_class}>
-                                    <img src= {EditIcon} onClick={(event) => {
-                                        event.stopPropagation()
-                                        handleDialogInfo("edit", true, todo.name, todo.description, todo.status, todo.id)
-                                    }} 
-                                    />
-                                    <img src= {DeleteIcon} onClick={(event) => {
-                                        event.stopPropagation()
-                                        deleteTodo(todo.id)
-                                    }} />
-                                </div>
-                            </div>
-                            <p 
-                                // style= {{
-                                //     margin: "0px",
-                                //     marginBottom: "5px",
-                                //     whiteSpace: "nowrap",         /* Prevents the text from wrapping */
-                                //     overflow: "hidden",            /* Hides any text that exceeds the width */
-                                //     textOverflow: "ellipsis",     /* Displays an ellipsis (...) to indicate overflow */
-                                //     display: "block",              /* Ensures the ellipsis works as expected */
-                                // }}
-                                className={styles.todo_description}
-                            >
-                                {todo.description}
-                            </p>
-                            <div className={styles.status_btn_container}>
-                                {["To Do", "In Progress", "Done"].map(statusOption => {
-                                    return (
-                                        <span
-                                            key={statusOption}
-                                            className={styles.todo_status}
-                                            style= {activeStatusBtnStyle(statusOption, todo.status)}
-                                            onClick={(event) => {
+                <div 
+                    className={styles.todo_list_content_box}
+                    style={{ overflowY: todos.length > 0 ? "scroll" : "auto" }}
+                >
+                    {isLoading ? (
+                        <Loader />
+                    ) : getTodosByStatusFilter()?.length > 0 ?
+                            getTodosByStatusFilter()?.map(todo => (
+                                <div
+                                    key= {todo.id}
+                                    className= {styles.todo_list_item}
+                                    style= {{
+                                        borderLeft: `5px solid ${getStatusColor(todo.status)}`,
+                                    }}
+                                    onClick={() => {handleDialogInfo("view", true, todo.name, todo.description, todo.status, todo.id)}}
+                                >
+                                    <div className={styles.todo_action_section}>
+                                        <p className={styles.todo_name} >{todo.name}</p>
+                                        <div className={styles.icon_class}>
+                                            <img alt= "edit-icon" src= {EditIcon} onClick={(event) => {
                                                 event.stopPropagation()
-                                                // handleTodoUpdate(todo.id, { ...todo, status: statusOption })
-                                                updateTodo(todo.id, { ...todo, status: statusOption })
-                                            }}
-                                        >
-                                            {statusOption}
-                                        </span>
-                                    )
-                                })}
-                            </div>
+                                                handleDialogInfo("edit", true, todo.name, todo.description, todo.status, todo.id)
+                                            }} 
+                                            />
+                                            <img alt= "delete-icon" src= {DeleteIcon} onClick={(event) => {
+                                                event.stopPropagation()
+                                                deleteTodo(todo.id)
+                                            }} />
+                                        </div>
+                                    </div>
+                                    <p 
+                                        // style= {{
+                                        //     margin: "0px",
+                                        //     marginBottom: "5px",
+                                        //     whiteSpace: "nowrap",         /* Prevents the text from wrapping */
+                                        //     overflow: "hidden",            /* Hides any text that exceeds the width */
+                                        //     textOverflow: "ellipsis",     /* Displays an ellipsis (...) to indicate overflow */
+                                        //     display: "block",              /* Ensures the ellipsis works as expected */
+                                        // }}
+                                        className={styles.todo_description}
+                                    >
+                                        {todo.description}
+                                    </p>
+                                    <div className={styles.status_btn_container}>
+                                        {["To Do", "In Progress", "Done"].map(statusOption => {
+                                            return (
+                                                <span
+                                                    key={statusOption}
+                                                    className={styles.todo_status}
+                                                    style= {activeStatusBtnStyle(statusOption, todo.status)}
+                                                    onClick={(event) => {
+                                                        event.stopPropagation()
+                                                        // handleTodoUpdate(todo.id, { ...todo, status: statusOption })
+                                                        updateTodo(todo.id, { ...todo, status: statusOption })
+                                                    }}
+                                                >
+                                                    {statusOption}
+                                                </span>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            )
+                    ) : (
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", flexDirection: "column" }}>
+                            <p style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>No todos added yet!</p>
+                            <p>Start by adding your first todo item.</p>
+                            {/* You can add a button to add todos or other UI elements */}
                         </div>
-                    ))}
+                    )}
                 </div>
                 <TodoDialogComponent 
                   handleChangeDialogInfo= {handleDialogInfo}

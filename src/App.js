@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import logo from './logo.svg';
-import { Header } from './components'
+import { Header, Loader } from './components'
 import { Homepage, Loginpage, SignupPage, TodosPage, TodoItemPage } from './pages'
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { auth } from "./api/firebase"
@@ -9,6 +9,7 @@ function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -38,6 +39,8 @@ function App() {
               <Loginpage
                 setIsLoggedIn= {setIsLoggedIn}
                 isLoggedIn= {isLoggedIn}
+                setIsLoading= {setIsLoading}
+                isLoading= {isLoading}
               />
             }
             path="/login"
@@ -45,26 +48,38 @@ function App() {
           <Route 
             element={
               <SignupPage 
-                isLoggedIn= {isLoggedIn}
+                setIsLoading= {setIsLoading}
+                isLoading= {isLoading}
               />
             }
             path="/signup"
           />
           <Route 
             element={
-              <TodosPage 
+              <TodosPage
                 isLoggedIn= {isLoggedIn}
                 userId= {user?.uid || null}
+                setIsLoading= {setIsLoading}
+                isLoading= {isLoading}
               />
             }
+            // element={
+            //   isLoading ?
+            //     <Loader /> :
+            //     <TodosPage
+            //       isLoggedIn= {isLoggedIn}
+            //       userId= {user?.uid || null}
+            //       setIsLoading= {setIsLoading}
+            //     />
+            // }
             path="/todos"
           />
-          <Route 
+          {/* <Route 
             element={
               <TodoItemPage />
             }
             path="/todo/:todoid"
-          />
+          /> */}
         </Routes>
       </BrowserRouter>
     </>
